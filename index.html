@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organize Bookmarks</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3QgeD0iNiIgeT0iMTQiIHdpZHRoPSI1MiIgaGVpZ2h0PSI0MiIgcng9IjUiIGZpbGw9IiMyRDRFQTIiLz4KICA8cGF0aCBkPSJNNiAxOWE1IDUgMCAwIDEgNS01aDE0bDUgNmgyM2E1IDUgMCAwIDEgNSA1djJINnoiIGZpbGw9IiM0QTZCQzQiLz4KICA8cGF0aCBkPSJNMjIgMjZoMTB2MjBsLTUtNC01IDR6IiBmaWxsPSIjRjJDMTRFIi8+CiAgPHJlY3QgeD0iMzciIHk9IjMwIiB3aWR0aD0iMTUiIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iI0RDRTRGNyIvPgogIDxyZWN0IHg9IjM3IiB5PSIzNyIgd2lkdGg9IjExIiBoZWlnaHQ9IjMiIHJ4PSIxLjUiIGZpbGw9IiNEQ0U0RjciLz4KICA8cmVjdCB4PSIzNyIgeT0iNDQiIHdpZHRoPSIxMyIgaGVpZ2h0PSIzIiByeD0iMS41IiBmaWxsPSIjRENFNEY3Ii8+Cjwvc3ZnPgo=">
+  <style>
+:root {
+  color-scheme: light;
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --ink: #1b2330;
+  --muted: #5a6576;
+  --line: #d2d8e0;
+  --accent: #2d4ea2;
+  --accent-ink: #ffffff;
+  --accent-soft: #dfe6f7;
+  --warn-bg: #fff0c7;
+  --warn-ink: #7a5300;
+  --error: #b3261e;
+  --tab-0: #2d4ea2;
+  --tab-1: #2f7d6d;
+  --tab-2: #9a5b13;
+  --tab-3: #7b4aa0;
+  --tab-4: #a33b4b;
+  --tab-5: #4f7a28;
+  --tab-6: #2e6f9e;
+  --tab-7: #8a6d1f;
+  --font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #161b22;
+    --surface: #1d232c;
+    --ink: #e4e8ee;
+    --muted: #9aa4b2;
+    --line: #313946;
+    --accent: #94abf2;
+    --accent-ink: #10172a;
+    --accent-soft: #263252;
+    --warn-bg: #3d3216;
+    --warn-ink: #f2cf7a;
+    --error: #f2b8b5;
+    --tab-0: #94abf2;
+    --tab-1: #6fc7b3;
+    --tab-2: #e0a35a;
+    --tab-3: #c39be3;
+    --tab-4: #ec8f9d;
+    --tab-5: #9fcc72;
+    --tab-6: #7fb8e0;
+    --tab-7: #d8bd6a;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 var(--font);
+}
+
+.top {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 24px 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+h1 {
+  font: 600 1.75rem/1.2 var(--font-display);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.gpu { margin: 0; color: var(--muted); font-size: 0.875rem; max-width: 60ch; text-align: right; }
+.top-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.lang button { border: 0; border-radius: 0; padding: 4px 12px; font-size: 0.8rem; font-weight: 500; color: var(--muted); background: transparent; }
+.lang button + button { border-left: 1px solid var(--line); }
+.lang button:hover { color: var(--ink); }
+.lang button[aria-pressed="true"] { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+@media (max-width: 640px) { .top-side { align-items: flex-start; } .gpu { text-align: left; } }
+
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 8px 24px 120px;
+}
+
+.panel, .notice {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px 24px 24px;
+  margin-top: 16px;
+}
+.notice { border-left: 5px solid var(--accent); }
+.notice p { margin: 0 0 12px; }
+
+h2 {
+  font: 600 1.05rem/1.3 var(--font-display);
+  margin: 22px 0 8px;
+}
+.panel > h2:first-child { margin-top: 0; }
+
+.hint { color: var(--muted); font-size: 0.875rem; margin: 6px 0 0; max-width: 72ch; }
+.error { color: var(--error); }
+
+.roots { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.count {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+select, input[type="number"], input[type="search"], input[type="text"], textarea, .rename {
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+select { min-width: min(100%, 360px); }
+textarea { width: 100%; resize: vertical; }
+input[type="number"] { width: 5.5em; }
+
+.fine { margin-top: 18px; }
+.fine summary { cursor: pointer; color: var(--muted); }
+.fine-grid { display: grid; gap: 10px; margin-top: 12px; }
+.fine-grid label { display: flex; justify-content: space-between; align-items: center; gap: 12px; max-width: 460px; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; align-items: center; }
+
+button {
+  font: inherit;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+button:hover:not(:disabled) { border-color: var(--accent); }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button.primary:hover:not(:disabled) { filter: brightness(1.08); }
+button.quiet { border-color: transparent; color: var(--muted); background: transparent; }
+button:disabled { opacity: 0.5; cursor: default; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Progress */
+.phases { list-style: none; padding: 0; margin: 0; counter-reset: phase; display: grid; gap: 14px; }
+.phases li { counter-increment: phase; color: var(--muted); }
+.phases li.active, .phases li.done { color: var(--ink); }
+.phase-head { display: flex; justify-content: space-between; gap: 12px; }
+.phase-name::before {
+  content: counter(phase);
+  display: inline-grid;
+  place-items: center;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  font-size: 0.8rem;
+}
+.phases li.active .phase-name::before { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.phases li.done .phase-name::before { content: "✓"; background: var(--accent-soft); border-color: var(--accent-soft); }
+.phase-name { font-weight: 600; }
+.phase-status { font-size: 0.875rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.phase-note { margin: 4px 0 0; font-size: 0.875rem; color: var(--muted); min-height: 1.3em; overflow-wrap: anywhere; }
+.phases li:not(.active) .phase-note { display: none; }
+
+progress {
+  width: 100%;
+  height: 6px;
+  margin-top: 6px;
+  appearance: none;
+  border: 0;
+  border-radius: 3px;
+  background: var(--accent-soft);
+  overflow: hidden;
+}
+progress::-moz-progress-bar { background: var(--accent); border-radius: 3px; }
+
+.log { list-style: none; margin: 20px 0 0; padding: 12px 0 0; border-top: 1px solid var(--line); font-size: 0.875rem; color: var(--muted); }
+.log li + li { margin-top: 4px; }
+.log li:first-child { color: var(--ink); }
+
+/* Preview */
+.reviewbar { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 16px 0 10px; border-bottom: 1px solid var(--line); }
+.reviewhead { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+.reviewhead h2 { margin: 0; font-size: 1.35rem; }
+.stats { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.tools input[type="search"] { flex: 1 1 240px; }
+
+.tree { margin-top: 12px; }
+.tree ul { list-style: none; margin: 0; padding: 0; }
+.tree-root > .folder { margin-bottom: 6px; }
+
+.folder-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 8px 8px 6px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid transparent;
+}
+.folder.depth-1 > .folder-row {
+  border-left: 6px solid var(--tab);
+  border-radius: 4px 10px 10px 4px;
+}
+.folder.depth-2 > .folder-row, .folder.depth-3 > .folder-row { background: transparent; }
+.folder-row.drop { border-color: var(--accent); background: var(--accent-soft); }
+
+.folder > ul {
+  margin-left: 18px;
+  padding: 4px 0 6px 12px;
+  border-left: 2px solid color-mix(in srgb, var(--tab) 35%, transparent);
+}
+
+.caret { border: 0; background: transparent; padding: 0 4px; color: var(--muted); line-height: 1.5; }
+.folder-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.folder-name { font-weight: 600; cursor: pointer; }
+.folder.depth-1 > .folder-row .folder-name { font-size: 1.05rem; }
+.folder-desc, .folder-subs { font-size: 0.85rem; color: var(--muted); }
+.folder-subs { font-style: italic; }
+.folder-row .count { padding-top: 2px; }
+.more { border: 0; background: transparent; padding: 0 8px; font-size: 1.1rem; line-height: 1.3; color: var(--muted); }
+.rename { flex: 1; padding: 3px 8px; }
+
+.item {
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: grab;
+}
+.item:hover { background: var(--surface); }
+.item-main { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
+.item-title { color: var(--ink); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item-title:hover { text-decoration: underline; }
+.item-meta { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 0.8rem; color: var(--muted); }
+.item-meta .old { overflow-wrap: anywhere; }
+.badge { flex: none; font-size: 0.75rem; padding: 0 6px; border-radius: 4px; background: var(--warn-bg); color: var(--warn-ink); }
+.empty { color: var(--muted); font-size: 0.875rem; padding: 6px 8px; }
+
+.applybar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  padding: 10px max(24px, calc((100vw - 980px) / 2 + 24px));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 16px;
+}
+.applybar .actions { margin: 0; }
+
+.menu {
+  position: absolute;
+  z-index: 10;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 6px;
+  display: grid;
+  min-width: 260px;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.menu button { border: 0; text-align: left; background: transparent; padding: 7px 10px; }
+.menu button:hover:not(:disabled) { background: var(--accent-soft); }
+
+dialog {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 20px 24px;
+  width: min(480px, calc(100vw - 32px));
+}
+dialog::backdrop { background: color-mix(in srgb, var(--ink) 35%, transparent); }
+dialog h2 { margin-top: 0; }
+dialog label { display: grid; gap: 4px; margin-top: 12px; }
+dialog label[hidden] { display: none; }
+dialog .actions { justify-content: flex-end; }
+
+#done progress { height: 8px; margin: 8px 0 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+.fine-grid label.wide { max-width: 620px; justify-content: flex-start; }
+.testbox { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.testbox h3 { font: 600 1rem/1.3 var(--font-display); margin: 0 0 8px; }
+.testlist { margin: 0; padding-left: 1.4em; display: grid; gap: 4px; }
+.testlist .ok { color: var(--ink); }
+.testlist .fail { color: var(--error); }
+.testlist .wait { color: var(--muted); }
+
+/* Loading files */
+.dropzone {
+  border: 2px dashed var(--line);
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 14px;
+  text-align: center;
+  background: var(--bg);
+}
+.dropzone p { margin: 0; }
+.dropzone.over { border-color: var(--accent); background: var(--accent-soft); }
+.filelist { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 4px; }
+.filelist li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+.filelist li span:first-child { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+.filelist button { padding: 2px 8px; }
+.dedupe { margin-top: 12px; }
+code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 0.9em; }
+.panel h3 { font: 600 1rem/1.3 var(--font-display); margin: 20px 0 6px; }
+.steps { margin: 0; padding-left: 1.4em; display: grid; gap: 4px; }
+.applybar .hint { margin: 0; max-width: 56ch; }
+.notice-inline {
+  margin: 16px 0 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  font-size: 0.9rem;
+}
+
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3QgeD0iNiIgeT0iMTQiIHdpZHRoPSI1MiIgaGVpZ2h0PSI0MiIgcng9IjUiIGZpbGw9IiMyRDRFQTIiLz4KICA8cGF0aCBkPSJNNiAxOWE1IDUgMCAwIDEgNS01aDE0bDUgNmgyM2E1IDUgMCAwIDEgNSA1djJINnoiIGZpbGw9IiM0QTZCQzQiLz4KICA8cGF0aCBkPSJNMjIgMjZoMTB2MjBsLTUtNC01IDR6IiBmaWxsPSIjRjJDMTRFIi8+CiAgPHJlY3QgeD0iMzciIHk9IjMwIiB3aWR0aD0iMTUiIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iI0RDRTRGNyIvPgogIDxyZWN0IHg9IjM3IiB5PSIzNyIgd2lkdGg9IjExIiBoZWlnaHQ9IjMiIHJ4PSIxLjUiIGZpbGw9IiNEQ0U0RjciLz4KICA8cmVjdCB4PSIzNyIgeT0iNDQiIHdpZHRoPSIxMyIgaGVpZ2h0PSIzIiByeD0iMS41IiBmaWxsPSIjRENFNEY3Ii8+Cjwvc3ZnPgo=" alt="" width="36" height="36">
+      <h1 data-i18n="title">Organize Bookmarks</h1>
+    </div>
+    <div class="top-side">
+      <div class="lang" role="group" aria-label="Language" data-i18n-aria="lang.label">
+        <button type="button" data-lang="en" lang="en" aria-pressed="false">English</button><button type="button" data-lang="de" lang="de" aria-pressed="false">Deutsch</button>
+      </div>
+      <p id="gpu" class="gpu">Checking graphics card …</p>
+    </div>
+  </header>
+
+  <main>
+    <section id="resume" class="notice" hidden>
+      <p id="resumeText"></p>
+      <div class="actions">
+        <button id="resumeGo" class="primary" type="button" data-i18n="resumeBtn">Resume</button>
+        <button id="resumeDrop" type="button" data-i18n="resumeDrop">Discard and start over</button>
+      </div>
+    </section>
+
+    <section id="setup" class="panel">
+      <h2 data-i18n="backups">Bookmark backups</h2>
+      <div id="drop" class="dropzone">
+        <p data-i18n-html="drop.html"><strong>Drag backup files here</strong> or</p>
+        <button id="pick" type="button" data-i18n="pick">Choose files</button>
+        <input autocomplete="off" id="files" type="file" accept=".json,.jsonlz4,application/json" multiple hidden>
+      </div>
+      <ul id="fileList" class="filelist"></ul>
+      <p id="fileError" class="error" hidden></p>
+      <p class="hint" data-i18n-html="setup.hint">To create a backup in Firefox: Manage Bookmarks (Ctrl+Shift+O) › Import and Backup › Backup … You can also load the automatic backups from your profile folder (<code>bookmarkbackups/*.jsonlz4</code>). Multiple files are merged into one collection.</p>
+
+      <div id="afterFiles" hidden>
+        <h2 data-i18n="what">What should be sorted?</h2>
+        <div id="roots" class="roots"></div>
+        <label class="check dedupe"><input autocomplete="off" id="dedupe" type="checkbox" checked> <span data-i18n="dedupe">Merge duplicate bookmarks</span> <span id="dupInfo" class="count"></span></label>
+
+        <h2><label for="structure" data-i18n="structure">Folder structure</label></h2>
+        <select id="structure"><option value="" data-i18n="struct.new">Design a new one</option></select>
+        <p id="structureHint" class="hint"></p>
+
+        <div id="targetWrap">
+          <h2><label for="target" data-i18n="target">Put the new structure in</label></h2>
+          <select id="target">
+            <option value="menu" data-i18n="root.menu">Bookmarks Menu</option>
+            <option value="unfiled" data-i18n="root.unfiled">Other Bookmarks</option>
+            <option value="toolbar" data-i18n="root.toolbar">Bookmarks Toolbar</option>
+          </select>
+        </div>
+
+        <h2><label for="model" data-i18n="model">Language model</label></h2>
+        <select id="model"></select>
+        <p id="modelHint" class="hint"></p>
+
+        <h2><label for="wish" data-i18n="wish">Requests for the new structure</label></h2>
+        <textarea autocomplete="off" id="wish" rows="3" data-i18n-placeholder="wish.ph" placeholder="For example: Keep work and personal separate. Sort recipes by cuisine. German folder names."></textarea>
+
+        <details class="fine">
+          <summary data-i18n="fine">Advanced settings</summary>
+          <div class="fine-grid">
+            <label><span data-i18n="fine.maxTop">Maximum number of top-level folders</span> <input autocomplete="off" id="maxTop" type="number" min="4" max="20" value="12"></label>
+            <label><span data-i18n="fine.minSize">Dissolve folders with fewer bookmarks than</span> <input autocomplete="off" id="minSize" type="number" min="1" max="20" value="3"></label>
+            <label><span data-i18n="fine.maxLeaf">Split folders with more bookmarks than</span> <input autocomplete="off" id="maxLeaf" type="number" min="15" max="200" value="40"></label>
+            <label><span data-i18n="fine.prefill">Process input in chunks of</span>
+              <select id="prefill">
+                <option value="64" data-i18n="pf.64">64 tokens (gentlest)</option>
+                <option value="128" selected data-i18n="pf.128">128 tokens</option>
+                <option value="256" data-i18n="pf.256">256 tokens</option>
+                <option value="512" data-i18n="pf.512">512 tokens</option>
+                <option value="1024" data-i18n="pf.1024">1,024 tokens (fastest)</option>
+              </select>
+            </label>
+            <label class="check wide"><input autocomplete="off" id="ignoreOld" type="checkbox"> <span data-i18n="fine.ignoreOld">Don’t use existing folders as hints</span></label>
+            <label class="check wide"><input autocomplete="off" id="looseJson" type="checkbox"> <span data-i18n="fine.loose">Don’t enforce the answer format (fallback mode in case the graphics test crashes with the enforced format)</span></label>
+          </div>
+        </details>
+
+        <div class="actions">
+          <button id="start" class="primary" type="button" disabled data-i18n="start">Start analysis</button>
+          <button id="gpuTest" type="button" disabled data-i18n="gpuTest">Test graphics card</button>
+          <button id="clearCache" class="quiet" type="button" data-i18n="clearCache">Delete downloaded model</button>
+        </div>
+        <div id="testBox" class="testbox" hidden>
+          <h3 data-i18n="testTitle">Graphics test</h3>
+          <ol id="testList" class="testlist"></ol>
+          <p id="testVerdict" class="hint"></p>
+        </div>
+      </div>
+      <p id="storageNote" class="notice-inline" hidden></p>
+      <p class="hint" data-i18n="privacy">Everything runs on your computer; your bookmarks never leave it. Only the language model is downloaded from the internet, once.</p>
+    </section>
+
+    <section id="run" class="panel" hidden>
+      <h2 id="runTitle">Analysis running</h2>
+      <ol id="phases" class="phases"></ol>
+      <ul id="log" class="log" aria-live="polite"></ul>
+      <p id="runError" class="error" hidden></p>
+      <div class="actions">
+        <button id="pause" type="button">Pause</button>
+        <button id="continue" class="primary" type="button" hidden>Resume</button>
+        <button id="backToSetup" type="button" hidden data-i18n="backToSetup">Back to settings</button>
+      </div>
+    </section>
+
+    <section id="review" hidden>
+      <div class="reviewbar">
+        <div class="reviewhead">
+          <h2 data-i18n="review.title">Preview of the new structure</h2>
+          <p id="stats" class="stats"></p>
+        </div>
+        <div class="tools">
+          <input autocomplete="off" id="search" type="search" placeholder="Search bookmarks" aria-label="Search bookmarks" data-i18n-placeholder="search" data-i18n-aria="search">
+          <button id="expand" type="button" data-i18n="expandAll">Expand all</button>
+          <button id="collapse" type="button" data-i18n="collapseAll">Collapse all</button>
+          <button id="addTop" type="button" data-i18n="addTop">New top-level folder</button>
+        </div>
+        <p class="hint" data-i18n="review.hint">Drag bookmarks or folders onto a folder to move them. Double-click a name to rename it.</p>
+      </div>
+      <div id="tree" class="tree"></div>
+      <div class="applybar">
+        <p id="reviewInfo" class="hint"></p>
+        <div class="actions">
+          <button id="restart" type="button" data-i18n="restart">Analyze again</button>
+          <button id="apply" class="primary" type="button" data-i18n="apply">Download sorted file</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="done" class="panel" hidden>
+      <h2 data-i18n="done.title">Sorted file downloaded</h2>
+      <p id="doneText"></p>
+      <h3 data-i18n="done.how">How to import it into Firefox</h3>
+      <ol class="steps">
+        <li data-i18n="done.s1">Open Manage Bookmarks (Ctrl+Shift+O).</li>
+        <li data-i18n="done.s2">Import and Backup › Restore › Choose File …</li>
+        <li data-i18n="done.s3">Select the downloaded file and confirm.</li>
+      </ol>
+      <p class="hint" data-i18n="done.hint">Restoring replaces all existing bookmarks with the contents of the file. That’s why the file also contains everything that wasn’t sorted. If you use Firefox Sync, the new structure will reach your other devices too.</p>
+      <div class="actions">
+        <button id="backToReview" type="button" data-i18n="backToReview">Back to preview</button>
+        <button id="again" class="primary" type="button" data-i18n="again">Start a new sort</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="dlg">
+    <form autocomplete="off" method="dialog" id="dlgForm">
+      <h2 id="dlgTitle"></h2>
+      <p id="dlgText"></p>
+      <label id="dlgInputWrap"><span id="dlgInputLabel"></span><input autocomplete="off" id="dlgInput" type="text"></label>
+      <label id="dlgSelectWrap"><span id="dlgSelectLabel"></span><select id="dlgSelect"></select></label>
+      <div class="actions">
+        <button value="cancel" type="submit" formnovalidate data-i18n="cancel">Cancel</button>
+        <button value="ok" id="dlgOk" class="primary" type="submit"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    // Shows errors even if the main script never starts.
+    (function () {
+      var de = (function () {
+        try { var s = localStorage.getItem("lesezeichen-ordnen-lang"); if (s === "de" || s === "en") return s === "de"; } catch (e) {}
+        var l = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+        for (var i = 0; i < l.length; i++) {
+          var p = String(l[i]).toLowerCase().split("-")[0];
+          if (p === "de") return true;
+          if (p === "en") return false;
+        }
+        return false;
+      })();
+      var T = de ? {
+        start: "Fehler beim Start: ", unknown: "unbekannt", line: " (Zeile ",
+        partial: function (p) { return "Die Seite ist nur unvollständig angekommen (Skript zu " + p + " % übertragen). Der Server hat die Übertragung abgebrochen, oder die Datei wurde nicht vollständig hochgeladen."; },
+        loadFail: "Eine Skriptdatei konnte nicht geladen werden. Prüfe, ob app.js neben der HTML-Datei auf dem Server liegt und vollständig hochgeladen ist, und ob die Internetverbindung steht (web-llm.js wird von cdn.jsdelivr.net geladen).",
+        notRun: "Das Hauptskript wurde nicht ausgeführt. Öffne die Browser-Konsole (Strg+Umschalt+K) und schick mir alle Meldungen.",
+        stuck: "Das Hauptskript ist beim Start hängen geblieben. Öffne die Browser-Konsole (Strg+Umschalt+K) und schick mir alle Meldungen."
+      } : {
+        start: "Startup error: ", unknown: "unknown", line: " (line ",
+        partial: function (p) { return "The page arrived incomplete (only " + p + " % of the script was transferred). The server aborted the transfer, or the file wasn’t fully uploaded."; },
+        loadFail: "A script file could not be loaded. Check that app.js sits next to the HTML file on the server and was uploaded completely, and that you are online (web-llm.js is loaded from cdn.jsdelivr.net).",
+        notRun: "The main script did not run. Open the browser console (Ctrl+Shift+K) and send me all messages.",
+        stuck: "The main script got stuck during startup. Open the browser console (Ctrl+Shift+K) and send me all messages."
+      };
+      var shown = false;
+      function show(msg) {
+        var el = document.getElementById("gpu");
+        if (!el) return;
+        shown = true;
+        el.textContent = msg;
+        el.className = "gpu error";
+      }
+      window.addEventListener("error", function (e) {
+        if (window.__appStarted) return;
+        show(T.start + (e.message || e.error || T.unknown) + T.line + e.lineno + ")");
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        if (window.__appStarted) return;
+        show(T.start + ((e.reason && e.reason.message) || e.reason));
+      });
+      setTimeout(function () {
+        if (window.__appStarted || shown) return;
+        var mod = document.querySelector('script[type="module"]');
+        var expected = mod ? Number(mod.getAttribute("data-len")) : 0;
+        if (!mod || (expected && mod.textContent.length < expected)) {
+          var pct = mod && expected ? Math.floor((mod.textContent.length / expected) * 100) : 0;
+          show(T.partial(pct));
+        } else if (window.__loadFailed) {
+          show(T.loadFail);
+        } else if (!window.__moduleLoaded) {
+          show(T.notRun);
+        } else {
+          show(T.stuck);
+        }
+      }, 8000);
+    })();
+  </script>
+  <!-- WebLLM (Apache-2.0, https://github.com/mlc-ai/web-llm) is loaded from the jsDelivr CDN.
+       app.js imports "./web-llm.js"; this import map redirects that import to the pinned release. -->
+  <script type="importmap">
+    {
+      "imports": {
+        "./web-llm.js": "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.87/lib/index.js"
+      }
+    }
+  </script>
+  <script type="module" src="app.js" onerror="window.__loadFailed = true"></script>
+</body>
+</html>
